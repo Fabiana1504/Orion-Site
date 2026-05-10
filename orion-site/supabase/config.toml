@@ -1,0 +1,12 @@
+# Supabase CLI — https://supabase.com/docs/guides/cli
+# Enlazá el proyecto real: supabase link --project-ref <ref>
+# Local: supabase functions serve --env-file supabase/.env.local
+
+[api]
+enabled = true
+
+[functions.analyze-run]
+verify_jwt = false
+
+[functions.ingest-device]
+verify_jwt = false
