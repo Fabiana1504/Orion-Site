@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense } from "react";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import About from "../components/About";
@@ -9,28 +9,10 @@ import ProcessSection from "../components/ProcessSection";
 import Departments from "../components/Departments";
 import TeamSection from "../components/TeamSection";
 import Footer from "../components/Footer";
-import LabLogin from "../components/auth/LabLogin";
-import { ORION_OPEN_LAB_LOGIN_EVENT } from "../lib/orionLabLogin";
-import { useAuth } from "../hooks/useAuth";
 
 const MissionStorySection = lazy(() => import("../components/MissionStorySection"));
 
 export default function HomePage() {
-  const { canAccessLab } = useAuth();
-  const [isLabLoginOpen, setIsLabLoginOpen] = useState(false);
-
-  useEffect(() => {
-    const open = () => setIsLabLoginOpen(true);
-    window.addEventListener(ORION_OPEN_LAB_LOGIN_EVENT, open);
-    return () => window.removeEventListener(ORION_OPEN_LAB_LOGIN_EVENT, open);
-  }, []);
-
-  useEffect(() => {
-    if (canAccessLab) {
-      setIsLabLoginOpen(false);
-    }
-  }, [canAccessLab]);
-
   return (
     <div id="top">
       <Header />
@@ -60,23 +42,6 @@ export default function HomePage() {
         <TeamSection />
       </main>
       <Footer />
-
-      {isLabLoginOpen ? (
-        <div className="login-modal-root" role="presentation">
-          <button
-            type="button"
-            className="login-modal-backdrop"
-            aria-label="Close"
-            onClick={() => setIsLabLoginOpen(false)}
-          />
-          <div className="login-modal-dialog clean-panel" role="dialog" aria-modal="true">
-            <LabLogin
-              onClose={() => setIsLabLoginOpen(false)}
-              onSuccess={() => setIsLabLoginOpen(false)}
-            />
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 }

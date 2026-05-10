@@ -14,6 +14,8 @@ import { supabase } from "../lib/supabaseClient";
  * }} row
  */
 export async function insertCalcRecord(row) {
+  // Extraemos métricas principales para guardarlas también en columnas explícitas.
+  // Esto facilita filtros/reportes sin parsear JSON en cada consulta.
   const reactionMsRaw = row?.resultJson?.reactionMs;
   const accelerationRaw = row?.resultJson?.accelerationMs2;
   const velocityRaw = row?.resultJson?.velocityKmh;
@@ -36,6 +38,8 @@ export async function insertCalcRecord(row) {
   if (acceleration_ms2 != null) payload.acceleration_ms2 = acceleration_ms2;
   if (velocity_kmh != null) payload.velocity_kmh = velocity_kmh;
 
+  // Upsert por equipo + categoría + tipo de cálculo:
+  // mantiene una fila "vigente" por cada métrica sin mezclar velocidad/reacción/aceleración.
   const upsertRes = await supabase
     .from("calc_team_records")
     .upsert(payload, { onConflict: "school_team_name,category,calc_kind" })
@@ -49,6 +53,7 @@ export async function insertCalcRecord(row) {
     upsertRes.error?.code === "42501" || // RLS/policy blocks UPDATE path
     upsertRes.error?.code === "42703" // missing columns in older schema
   ) {
+    // Compatibilidad con esquemas antiguos: inserción simple sin columnas nuevas.
     const legacyPayload = {
       user_id: payload.user_id,
       contact_email: payload.contact_email,
@@ -75,6 +80,7 @@ export async function insertCalcRecord(row) {
  * Inserta una medición desde Team tools (flujo público sin login).
  */
 export async function insertPublicCalcRecord(row) {
+  // Wrapper para flujo público: siempre sin userId y marcado como public_tools.
   return insertCalcRecord({ ...row, userId: null, source: "public_tools" });
 }
 
@@ -90,6 +96,7 @@ export async function fetchMyCalcRecords(userId, limit = 40) {
 
 /** Todas las mediciones (RLS: sólo personal con acceso al laboratorio). */
 export async function fetchAllCalcRecordsForLab(limit = 500) {
+  // Intento principal: esquema nuevo con columnas explícitas de métricas.
   const res = await supabase
     .from("calc_team_records")
     .select(
@@ -102,6 +109,7 @@ export async function fetchAllCalcRecordsForLab(limit = 500) {
 
   // Fallback for DBs that still don't have explicit metric columns.
   if (res.error?.code === "42703") {
+    // Fallback: esquema viejo sin reaction_ms/acceleration_ms2/velocity_kmh.
     return supabase
       .from("calc_team_records")
       .select(
@@ -118,5 +126,6 @@ export async function fetchAllCalcRecordsForLab(limit = 500) {
  * Delete one calc record by id (RLS must allow).
  */
 export async function deleteCalcRecordById(id) {
+  // Eliminación directa; el control real de permisos lo hace RLS.
   return supabase.from("calc_team_records").delete().eq("id", id);
 }

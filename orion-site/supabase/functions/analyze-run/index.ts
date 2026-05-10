@@ -1,9 +1,19 @@
 /**
+ * Archivo: supabase/functions/analyze-run/index.ts
+ * Responsabilidad: generar insight IA para una corrida, guardarlo en ai_insights
+ * y devolver resumen/alertas/recomendaciones/gráficos al frontend.
+ *
  * Edge Function: análisis IA con OpenAI Responses API + JSON Schema estricto.
  * Secretos: OPENAI_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (auto en Supabase hosted).
  *
  * Body: { "run_id": "uuid" }
  */
+declare const Deno: {
+  env: { get: (name: string) => string | undefined };
+  serve: (handler: (req: Request) => Response | Promise<Response>) => void;
+};
+
+// @ts-expect-error Deno Edge resolves remote URL imports at runtime.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
 const corsHeaders: Record<string, string> = {
@@ -12,6 +22,7 @@ const corsHeaders: Record<string, string> = {
 };
 
 const ORION_SCHEMA = {
+  // Esquema estricto: obliga formato estable para UI (sin markdown libre).
   type: "object",
   additionalProperties: false,
   properties: {
@@ -58,6 +69,7 @@ const ORION_SCHEMA = {
 };
 
 function extractResponsesOutputText(data: Record<string, unknown>): string | null {
+  // Responses API puede devolver texto en distintos nodos; este helper unifica extracción.
   const out = data.output;
   if (!Array.isArray(out)) {
     const ot = data.output_text;
@@ -80,6 +92,7 @@ function extractResponsesOutputText(data: Record<string, unknown>): string | nul
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
+    // Preflight CORS.
     return new Response("ok", { headers: corsHeaders });
   }
 
@@ -117,6 +130,7 @@ Deno.serve(async (req) => {
     const { data: sm } = await sb.from("sensor_measurements").select("*").eq("run_id", runId).maybeSingle();
     const { data: calc } = await sb.from("calculated_metrics").select("*").eq("run_id", runId).maybeSingle();
 
+    // Se compone contexto histórico para que el modelo compare tendencia, no solo una corrida aislada.
     const { data: histRuns } = await sb
       .from("runs")
       .select("id, created_at, car_model, oil_type, track_length_m")
@@ -184,6 +198,7 @@ Deno.serve(async (req) => {
         ],
         text: {
           format: {
+            // JSON Schema estricto para garantizar contrato con frontend.
             type: "json_schema",
             name: "orion_co2_analysis",
             strict: true,
@@ -222,6 +237,7 @@ Deno.serve(async (req) => {
     }
 
     const { error: insErr } = await sb.from("ai_insights").insert({
+      // Persistimos respuesta cruda para auditoría/debug, además del resumen normalizado.
       run_id: runId,
       summary: String(parsed.summary ?? ""),
       alerts: parsed.alerts ?? [],

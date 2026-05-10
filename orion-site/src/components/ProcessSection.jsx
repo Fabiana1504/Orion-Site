@@ -1,3 +1,7 @@
+/**
+ * Archivo: ProcessSection.jsx
+ * Responsabilidad: mostrar la metodología de trabajo del equipo en 3 etapas.
+ */
 const steps = [
   {
     step: "01",
@@ -28,6 +32,7 @@ export default function ProcessSection() {
           </p>
         </div>
 
+        {/* Render dinámico para mantener contenido consistente/expandible por pasos */}
         <ol className="process-steps">
           {steps.map((item) => (
             <li key={item.step} className="process-step clean-panel">

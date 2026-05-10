@@ -8,6 +8,7 @@ import LabLogin from "./LabLogin";
 
 export default function ProtectedLabRoute({ children }) {
   const { user, loading, canAccessLab } = useAuth();
+  // reauthOk fuerza ingreso de credenciales cada vez que se entra a una ruta protegida.
   const [reauthOk, setReauthOk] = useState(false);
   const isSignedIn = Boolean(user && user.is_anonymous !== true);
 
@@ -39,6 +40,7 @@ export default function ProtectedLabRoute({ children }) {
           <div className="container team-lab-container">
             <div className="team-lab-gate clean-panel">
               <p className="eyebrow eyebrow--pulse">Laboratory</p>
+              {/* LabLogin resuelve credenciales (local o Supabase) y habilita el paso */}
               <LabLogin onSuccess={() => setReauthOk(true)} />
               <p className="team-lab-back">
                 <Link to="/">← Back to home</Link>
@@ -52,12 +54,15 @@ export default function ProtectedLabRoute({ children }) {
   }
 
   if (!isSignedIn) {
+    // Si el login falla/caduca, no renderizamos children para evitar flash de contenido privado.
     return null;
   }
 
   if (!canAccessLab) {
+    // Usuario autenticado pero sin permiso en tabla lab_access.
     return <AccessDenied />;
   }
 
+  // Solo llega aquí quien pasó reauth + sesión válida + permiso de laboratorio.
   return children;
 }

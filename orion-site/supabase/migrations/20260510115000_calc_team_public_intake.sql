@@ -1,4 +1,6 @@
--- Bootstrap + intake público para Herramientas equipos.
+-- Archivo: 20260510115000_calc_team_public_intake.sql
+-- Responsabilidad: crear/ajustar la tabla de cálculos de equipos y definir RLS para
+-- intake público + acceso de laboratorio (select/update/delete controlados).
 -- Ejecutar completo en Supabase SQL Editor.
 
 create extension if not exists "pgcrypto";
@@ -19,6 +21,7 @@ create table if not exists public.calc_team_records (
   created_at timestamptz not null default now()
 );
 
+-- Compatibilidad: en bases ya existentes, asegura que la columna exista.
 alter table public.calc_team_records
   add column if not exists record_fingerprint text not null default '';
 
@@ -55,6 +58,7 @@ create policy "calc_records_select_own"
 drop policy if exists "calc_records_select_lab_staff" on public.calc_team_records;
 do $$
 begin
+  -- Se crea solo si existe la tabla lab_access (evita fallar en proyectos incompletos).
   if to_regclass('public.lab_access') is not null then
     execute $policy$
       create policy "calc_records_select_lab_staff"
@@ -77,6 +81,7 @@ $$;
 drop policy if exists "calc_records_delete_lab_staff" on public.calc_team_records;
 do $$
 begin
+  -- Misma estrategia condicional para política de borrado del staff.
   if to_regclass('public.lab_access') is not null then
     execute $policy$
       create policy "calc_records_delete_lab_staff"

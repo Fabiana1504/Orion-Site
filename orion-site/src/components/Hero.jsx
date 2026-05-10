@@ -2,6 +2,10 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import SafeImage from "./SafeImage";
 
+/**
+ * Archivo: Hero.jsx
+ * Responsabilidad: portada principal de la landing (branding + CTA hacia Team tools).
+ */
 export default function Hero() {
   return (
     <section className="hero-minimal">
@@ -12,6 +16,7 @@ export default function Hero() {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.9 }}
         >
+          {/* SafeImage evita roturas visuales si la imagen falla y mantiene estilo consistente. */}
           <SafeImage
             src="/logo.png"
             alt="Orion"
@@ -36,6 +41,7 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.75, delay: 0.45 }}
         >
+          {/* CTA principal hacia el flujo público de captura de mediciones. */}
           <Link to="/herramientas-equipos" className="btn btn-ghost hero-lab-link">
             Go to team tools
           </Link>

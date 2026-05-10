@@ -10,6 +10,12 @@ import {
 } from "recharts";
 import OrionConstellation from "./OrionConstellation";
 
+/**
+ * Archivo: MissionStorySection.jsx
+ * Responsabilidad: combinar narrativa de misión + visuales de datos (constelación y radar)
+ * para explicar identidad del equipo y prioridades de temporada.
+ */
+
 /** Siete ejes = las siete estrellas del asterismo: foco 2026 */
 const RADAR_MISION = [
   { eje: "Innovation", valor: 98 },
@@ -42,6 +48,7 @@ export default function MissionStorySection() {
         </div>
 
         <div className="mission-grid mission-grid--stacked">
+          {/* Visual interactivo principal (mapa de estrellas con valores del equipo). */}
           <OrionConstellation />
 
           <div className="mission-narrative clean-panel mission-narrative--after-constellation">
@@ -72,6 +79,7 @@ export default function MissionStorySection() {
           </div>
           <div className="mission-radar-wrap">
             <ResponsiveContainer width="100%" height="100%">
+              {/* Radar ilustrativo: priorización relativa por eje de trabajo. */}
               <RadarChart
                 cx="50%"
                 cy="52%"

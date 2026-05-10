@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 /**
+ * Archivo: OrionConstellation.jsx
+ * Responsabilidad: visual interactivo de la constelación de Orión con tarjetas
+ * contextuales por estrella (hover/focus/touch, accesible por teclado).
+ *
  * Coordenadas del asterismo (espacio 0–100).
  * popAnchor: tarjeta HTML a la derecha (start) o izquierda (end) de la estrella.
  */
@@ -80,6 +84,7 @@ const LINES = [
 ];
 
 function starPointToStagePx(svg, stage, x, y) {
+  // Convierte coordenadas del SVG (viewBox) a píxeles del contenedor para posicionar el popover.
   const pt = svg.createSVGPoint();
   pt.x = x;
   pt.y = y;
@@ -118,6 +123,7 @@ export default function OrionConstellation() {
   }, []);
 
   const scheduleHide = useCallback(() => {
+    // Delay corto para evitar que el tooltip "parpadee" al mover el mouse entre estrella y tarjeta.
     cancelScheduledHide();
     leaveTimerRef.current = window.setTimeout(() => {
       leaveTimerRef.current = null;
@@ -146,6 +152,7 @@ export default function OrionConstellation() {
   }, [updatePopoverPosition, selectedId]);
 
   useEffect(() => {
+    // Recalcula posición cuando cambia layout (resize/scroll) para mantener tooltip pegado a estrella.
     const stage = stageRef.current;
     if (!stage) return undefined;
     const ro = new ResizeObserver(() => updatePopoverPosition());
@@ -281,6 +288,7 @@ export default function OrionConstellation() {
                     onBlur={scheduleHide}
                     onClick={(e) => {
                       e.stopPropagation();
+                      // En touch/coarse pointer funciona como toggle (abrir/cerrar) por toque.
                       if (!isCoarseOrNoHover()) return;
                       cancelScheduledHide();
                       setSelectedId((prev) => (prev === s.id ? null : s.id));

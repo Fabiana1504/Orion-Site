@@ -1,10 +1,20 @@
 /**
+ * Archivo: supabase/functions/ingest-device/index.ts
+ * Responsabilidad: endpoint seguro para que Arduino/dispositivos envíen corridas
+ * sin exponer anon key en firmware.
+ *
  * Ingesta opcional para Arduino / dispositivos sin anon key en firmware.
  * Header: x-orion-device-secret: <DEVICE_INGEST_SECRET>
  * Body: mismo objeto JSON que acepta RPC create_run_complete (campos planos en la raíz).
  *
  * La función reenvía a create_run_complete con service role.
  */
+declare const Deno: {
+  env: { get: (name: string) => string | undefined };
+  serve: (handler: (req: Request) => Response | Promise<Response>) => void;
+};
+
+// @ts-expect-error Deno Edge resolves remote URL imports at runtime.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
 const corsHeaders: Record<string, string> = {
@@ -14,6 +24,7 @@ const corsHeaders: Record<string, string> = {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
+    // Preflight CORS para clientes web/embebidos.
     return new Response("ok", { headers: corsHeaders });
   }
 
@@ -27,6 +38,7 @@ Deno.serve(async (req) => {
     }
 
     const sent = req.headers.get("x-orion-device-secret");
+    // Autenticación simple por header compartido entre dispositivo y función.
     if (sent !== expected) {
       return new Response(JSON.stringify({ error: "No autorizado" }), {
         status: 401,
@@ -54,6 +66,7 @@ Deno.serve(async (req) => {
     const payload = body.payload && typeof body.payload === "object" ? body.payload : body;
 
     const sb = createClient(supabaseUrl, serviceKey);
+    // Centraliza validación/normalización en la RPC SQL del backend.
     const { data: runId, error } = await sb.rpc("create_run_complete", { payload });
 
     if (error) {

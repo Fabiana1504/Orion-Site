@@ -24,6 +24,7 @@ const METRIC_FILTERS = {
 const PIE_COLORS = ["#3d8cff", "#6366f1", "#22c55e", "#f59e0b", "#ec4899", "#94a3b8"];
 
 function toResultObject(raw) {
+  // Soporta result_json en dos formatos posibles: objeto o string JSON serializado.
   if (!raw) return null;
   if (typeof raw === "object") return raw;
   if (typeof raw === "string") {
@@ -38,6 +39,7 @@ function toResultObject(raw) {
 }
 
 function shortResult(row) {
+  // Priorizamos columnas explícitas; si no existen, caemos al JSON de resultado.
   const parts = [];
   if (row.velocity_kmh != null && Number.isFinite(Number(row.velocity_kmh))) {
     parts.push(`${Number(row.velocity_kmh).toFixed(2)} km/h`);
@@ -66,6 +68,7 @@ function escapeCsvCell(v) {
 }
 
 function rowsToCsv(rows) {
+  // Export plano para análisis externo (Excel/Sheets/BI).
   const headers = [
     "created_at",
     "school_team_name",
@@ -95,6 +98,8 @@ function rowsToCsv(rows) {
 }
 
 function detectMetricGroup(row) {
+  // Clasificación robusta por:
+  // 1) columnas explícitas, 2) calc_kind, 3) claves en result_json.
   const kind = String(row.calc_kind || "");
   if (row.velocity_kmh != null && Number.isFinite(Number(row.velocity_kmh))) return METRIC_FILTERS.SPEED;
   if (row.reaction_ms != null && Number.isFinite(Number(row.reaction_ms))) return METRIC_FILTERS.REACTION;
@@ -122,6 +127,7 @@ export default function LabGuestCalcAnalyticsPage() {
   const [deleteMsg, setDeleteMsg] = useState(null);
 
   const load = useCallback(async () => {
+    // Carga principal del tablero. Se reutiliza en mount, refresh manual y auto-refresh.
     setLoading(true);
     setErr(null);
     setDeleteMsg(null);
@@ -141,12 +147,14 @@ export default function LabGuestCalcAnalyticsPage() {
 
   useEffect(() => {
     const id = setInterval(() => {
+      // Auto refresh para ver nuevos registros de equipos casi en tiempo real.
       void load();
     }, 6000);
     return () => clearInterval(id);
   }, [load]);
 
   const availableCategories = useMemo(() => {
+    // Lista dinámica de categorías existentes en los datos actuales.
     const set = new Set();
     for (const r of rows) {
       const v = String(r.category ?? "").trim();
@@ -163,6 +171,7 @@ export default function LabGuestCalcAnalyticsPage() {
   }, [teamCategoryFilter, availableCategories]);
 
   const filteredRows = useMemo(() => {
+    // Filtro compuesto: primero por tipo de métrica y luego por categoría de equipo.
     let next = rows;
     if (metricFilter !== METRIC_FILTERS.ALL) {
       next = next.filter((r) => detectMetricGroup(r) === metricFilter);
@@ -174,6 +183,7 @@ export default function LabGuestCalcAnalyticsPage() {
   }, [rows, metricFilter, teamCategoryFilter]);
 
   const pieData = useMemo(() => {
+    // Agregación para gráfico de distribución por tipo de cálculo.
     const counts = new Map();
     for (const r of filteredRows) {
       const k = r.calc_kind || "otro";
@@ -186,6 +196,7 @@ export default function LabGuestCalcAnalyticsPage() {
   }, [filteredRows]);
 
   const downloadCsv = () => {
+    // Descarga de la vista actual (respeta filtros activos).
     const blob = new Blob([rowsToCsv(filteredRows)], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -196,6 +207,7 @@ export default function LabGuestCalcAnalyticsPage() {
   };
 
   const onDeleteRow = async (row) => {
+    // Borrado con confirmación para evitar eliminación accidental.
     const summary = `${row.school_team_name} · ${KIND_LABELS[row.calc_kind] ?? row.calc_kind} · ${shortResult(row)}`;
     const ok = window.confirm(`Delete this record?\n\n${summary}\n\nThis will also delete it from Supabase.`);
     if (!ok) return;

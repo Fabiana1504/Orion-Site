@@ -38,6 +38,7 @@ function parseNum(s) {
 }
 
 function loadSketchRows() {
+  // Historial local para no perder pruebas aunque falle la red/Supabase.
   try {
     const raw = localStorage.getItem(SKETCH_STORAGE_KEY);
     if (!raw) return [];
@@ -93,6 +94,7 @@ export default function PublicToolsPage() {
   }, [phase, refreshLocalList]);
 
   const visibleRows = useMemo(
+    // El historial mostrado se limita al equipo/categoría actualmente seleccionados.
     () =>
       localRows.filter(
         (r) => r.team === sessionTeam && r.category === sessionCategory,
@@ -161,6 +163,7 @@ export default function PublicToolsPage() {
     setSaveMsg(null);
     if (!sessionTeam.trim() || !sessionCategory.trim()) return;
     setSaveBusy(true);
+    // Siempre guardamos copia local primero para resiliencia offline.
     const row = {
       id: crypto.randomUUID(),
       createdAt: new Date().toISOString(),
@@ -177,6 +180,7 @@ export default function PublicToolsPage() {
     persistSketchRows(next);
     setLocalRows(next);
     if (remoteEnabled) {
+      // Segundo paso: sincronización remota en Supabase para visualización en laboratorio.
       const { error } = await insertPublicCalcRecord({
         contactEmail: sessionEmail || null,
         schoolTeamName: sessionTeam,
@@ -214,6 +218,7 @@ export default function PublicToolsPage() {
           </header>
 
           {phase === "pick" ? (
+            // Paso 1: identificar equipo y categoría antes de abrir los cálculos.
             <section className="clean-panel team-lab-card public-tools-auth">
               <h2 className="team-lab-card-head" style={{ marginBottom: 4 }}>
                 Step 1 — Team and category
@@ -272,6 +277,7 @@ export default function PublicToolsPage() {
             </section>
           ) : (
             <>
+              {/* Paso 2: workspace de mediciones para ese equipo/categoría */}
               <section className="clean-panel public-tools-session">
                 <div className="public-tools-session-row">
                   <div>
