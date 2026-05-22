@@ -15,7 +15,7 @@ import { isSupabaseConfigured } from "./supabaseEnv";
  * }} telemetry
  */
 export function buildChartPanels(telemetry) {
-  const oil = String(telemetry?.oilType || "").trim() || "Sin especificar";
+  const oil = String(telemetry?.oilType || "").trim() || "Not specified";
   const manualTrack =
     telemetry?.manualTrackSec != null && Number.isFinite(Number(telemetry.manualTrackSec))
       ? Number(telemetry.manualTrackSec)
@@ -30,18 +30,18 @@ export function buildChartPanels(telemetry) {
 
   panels.push({
     id: "oil",
-    title: "Aceite de referencia",
+    title: "Reference oil",
     type: "pie",
-    data: [{ name: oil === "Sin especificar" ? "Sin especificar" : oilLabel, value: 100 }],
+    data: [{ name: oil === "Not specified" ? "Not specified" : oilLabel, value: 100 }],
     unit: "",
   });
 
   if (manualTrack != null) {
     panels.push({
       id: "manualTrack",
-      title: "Tiempo de pista (manual)",
+      title: "Track time (manual)",
       type: "bar",
-      data: [{ name: "Pista", value: Math.round(manualTrack * 1000) / 1000 }],
+      data: [{ name: "Track", value: Math.round(manualTrack * 1000) / 1000 }],
       unit: "s",
     });
   }
@@ -50,9 +50,9 @@ export function buildChartPanels(telemetry) {
   if (weightG != null && Number.isFinite(Number(weightG)) && Number(weightG) > 0) {
     panels.push({
       id: "carWeight",
-      title: "Peso del carro",
+      title: "Car weight",
       type: "bar",
-      data: [{ name: "Masa", value: Math.round(Number(weightG) * 10) / 10 }],
+      data: [{ name: "Mass", value: Math.round(Number(weightG) * 10) / 10 }],
       unit: "g",
     });
   }
@@ -60,7 +60,7 @@ export function buildChartPanels(telemetry) {
   if (sensors.length) {
     panels.push({
       id: "sensors",
-      title: "Sensores Arduino (duración)",
+      title: "Arduino sensors (duration)",
       type: "bar",
       data: sensors.map((v, i) => ({
         name: `S${i + 1}`,
@@ -73,7 +73,7 @@ export function buildChartPanels(telemetry) {
   if (lapTimes.length) {
     panels.push({
       id: "laps",
-      title: "Vueltas registradas",
+      title: "Recorded laps",
       type: "bar",
       data: lapTimes.map((v, i) => ({
         name: `V${i + 1}`,
@@ -86,7 +86,7 @@ export function buildChartPanels(telemetry) {
   if (reactions.length) {
     panels.push({
       id: "reactions",
-      title: "Tiempos de reacción",
+      title: "Reaction times",
       type: "bar",
       data: reactions.map((v, i) => ({
         name: `R${i + 1}`,
@@ -100,7 +100,7 @@ export function buildChartPanels(telemetry) {
   if (vKmh != null && Number.isFinite(Number(vKmh))) {
     panels.push({
       id: "velocity",
-      title: "Speed media estimada",
+      title: "Estimated average speed",
       type: "bar",
       data: [
         { name: "km/h", value: Math.round(Number(vKmh) * 100) / 100 },
@@ -112,7 +112,7 @@ export function buildChartPanels(telemetry) {
               : Math.round((Number(vKmh) / 3.6) * 1000) / 1000,
         },
       ],
-      unit: "derivada de L/t",
+      unit: "derived from L/t",
     });
   }
 
@@ -120,7 +120,7 @@ export function buildChartPanels(telemetry) {
   if (acc != null && Number.isFinite(Number(acc))) {
     panels.push({
       id: "acceleration",
-      title: "Acceleration estimada (reposo → v)",
+      title: "Estimated acceleration (rest -> v)",
       type: "bar",
       data: [{ name: "m/s²", value: Math.round(Number(acc) * 1000) / 1000 }],
       unit: "m/s²",
@@ -133,7 +133,7 @@ export function buildChartPanels(telemetry) {
 function normalizePanel(p) {
   if (!p || typeof p !== "object") return null;
   const id = String(p.id || "").trim();
-  const title = String(p.title || "Gráfico").trim();
+  const title = String(p.title || "Chart").trim();
   if (!id || !title) return null;
   const type = p.type === "pie" ? "pie" : "bar";
   const rawData = Array.isArray(p.data) ? p.data : [];
@@ -185,7 +185,7 @@ export function mergeChartPanels(remote, local) {
  * }} telemetry
  */
 export function analyzeTelemetry(telemetry) {
-  const oil = String(telemetry?.oilType || "").trim() || "Sin especificar";
+  const oil = String(telemetry?.oilType || "").trim() || "Not specified";
   const carModel = String(telemetry?.carModel || "").trim();
   const manualTrack =
     telemetry?.manualTrackSec != null && Number.isFinite(Number(telemetry.manualTrackSec))
@@ -212,10 +212,10 @@ export function analyzeTelemetry(telemetry) {
 
   const barChart = [];
   lapTimes.forEach((v, i) => {
-    barChart.push({ name: `Vuelta ${i + 1}`, value: Math.round(v * 1000) / 1000 });
+    barChart.push({ name: `Lap ${i + 1}`, value: Math.round(v * 1000) / 1000 });
   });
   if (manualTrack != null) {
-    barChart.push({ name: "Pista (manual)", value: Math.round(manualTrack * 1000) / 1000 });
+    barChart.push({ name: "Track (manual)", value: Math.round(manualTrack * 1000) / 1000 });
   }
   if (sensors.length >= 1) {
     barChart.push({ name: "Sensor 1 (s)", value: Math.round(sensors[0] * 1000) / 1000 });
@@ -224,7 +224,7 @@ export function analyzeTelemetry(telemetry) {
     barChart.push({ name: "Sensor 2 (s)", value: Math.round(sensors[1] * 1000) / 1000 });
   }
   if (reactAvg != null) {
-    barChart.push({ name: "Reacción Ø (ms)", value: Math.round(reactAvg * 10) / 10 });
+    barChart.push({ name: "Reaction avg (ms)", value: Math.round(reactAvg * 10) / 10 });
   }
   if (telemetry?.velocityKmh != null && Number.isFinite(Number(telemetry.velocityKmh))) {
     barChart.push({ name: "v̄ (km/h)", value: Math.round(Number(telemetry.velocityKmh) * 100) / 100 });
@@ -233,80 +233,80 @@ export function analyzeTelemetry(telemetry) {
     barChart.push({ name: "a (m/s²)", value: Math.round(Number(telemetry.accelerationMs2) * 1000) / 1000 });
   }
   if (!barChart.length) {
-    barChart.push({ name: "Sin datos", value: 0 });
+    barChart.push({ name: "No data", value: 0 });
   }
 
   const pieChart = [];
   if (lapTimes.length) {
     pieChart.push({
-      name: "Vueltas (suma s)",
+      name: "Laps (sum s)",
       value: Math.round(lapTimes.reduce((a, b) => a + b, 0) * 1000) / 1000,
     });
   }
   if (reactions.length) {
     pieChart.push({
-      name: "Reacciones (suma ms)",
+      name: "Reactions (sum ms)",
       value: Math.round(reactions.reduce((a, b) => a + b, 0) * 100) / 100,
     });
   }
   if (sensors.length) {
     pieChart.push({
-      name: "Sensores (suma s)",
+      name: "Sensors (sum s)",
       value: Math.round(sensors.reduce((a, b) => a + b, 0) * 1000) / 1000,
     });
   }
   if (!pieChart.length) {
-    pieChart.push({ name: "Sin datos", value: 1 });
+    pieChart.push({ name: "No data", value: 1 });
   }
 
   const bullets = [];
   if (manualTrack != null) {
-    bullets.push(`Tiempo de pista (manual): ${manualTrack.toFixed(3)} s.`);
+    bullets.push(`Track time (manual): ${manualTrack.toFixed(3)} s.`);
   }
   if (sensors.length >= 2) {
     bullets.push(
-      `Sensores Arduino: ${sensors[0].toFixed(4)} s y ${sensors[1].toFixed(4)} s (duración medida entre haces).`,
+      `Arduino sensors: ${sensors[0].toFixed(4)} s and ${sensors[1].toFixed(4)} s (duration measured between beams).`,
     );
   } else if (sensors.length === 1) {
-    bullets.push(`Sensor 1: ${sensors[0].toFixed(4)} s (esperando S2 para el par).`);
+    bullets.push(`Sensor 1: ${sensors[0].toFixed(4)} s (waiting for S2 to complete the pair).`);
   }
   if (lapAvg != null) {
-    bullets.push(`Promedio tiempos considerados: ${lapAvg.toFixed(3)} s (rango ${lapMin?.toFixed(3)}–${lapMax?.toFixed(3)}).`);
+    bullets.push(`Average considered time: ${lapAvg.toFixed(3)} s (range ${lapMin?.toFixed(3)}-${lapMax?.toFixed(3)}).`);
   }
   if (reactAvg != null) {
     bullets.push(
-      `Reacción promedio: ${reactAvg.toFixed(1)} ms (${reactMin?.toFixed(0)}–${reactMax?.toFixed(0)}).`,
+      `Average reaction: ${reactAvg.toFixed(1)} ms (${reactMin?.toFixed(0)}-${reactMax?.toFixed(0)}).`,
     );
   }
-  if (oil !== "Sin especificar") {
-    bullets.push(`Aceite: ${oil}.`);
+  if (oil !== "Not specified") {
+    bullets.push(`Oil: ${oil}.`);
   }
   if (carModel) {
-    bullets.push(`Modelo de carro: ${carModel}.`);
+    bullets.push(`Car model: ${carModel}.`);
   }
   if (telemetry?.trackLengthM != null && Number.isFinite(Number(telemetry.trackLengthM))) {
-    bullets.push(`Longitud de pista referencia: ${Number(telemetry.trackLengthM).toFixed(2)} m.`);
+    bullets.push(`Reference track length: ${Number(telemetry.trackLengthM).toFixed(2)} m.`);
   }
   if (telemetry?.velocityKmh != null && Number.isFinite(Number(telemetry.velocityKmh))) {
     bullets.push(
-      `Speed media estimada: ${Number(telemetry.velocityKmh).toFixed(2)} km/h (${Number(telemetry.velocityMs ?? Number(telemetry.velocityKmh) / 3.6).toFixed(3)} m/s), con v = L/t.`,
+      `Estimated average speed: ${Number(telemetry.velocityKmh).toFixed(2)} km/h (${Number(telemetry.velocityMs ?? Number(telemetry.velocityKmh) / 3.6).toFixed(3)} m/s), with v = L/t.`,
     );
   }
   if (telemetry?.accelerationMs2 != null && Number.isFinite(Number(telemetry.accelerationMs2))) {
-    bullets.push(`Acceleration estimada (desde reposo): ${Number(telemetry.accelerationMs2).toFixed(3)} m/s².`);
+    bullets.push(`Estimated acceleration (from rest): ${Number(telemetry.accelerationMs2).toFixed(3)} m/s².`);
   }
   if (!bullets.length) {
-    bullets.push("Cargá aceite, tiempo de pista manual, reacciones o conectá Arduino.");
+    bullets.push("Add oil type, manual track time, reactions, or connect Arduino.");
   }
 
   const narrative = [
-    `Local analysis: aceite “${oil}”.`,
-    carModel ? ` Modelo ${carModel}.` : "",
-    manualTrack != null ? ` Pista manual ${manualTrack.toFixed(3)} s.` : "",
-    sensors.length >= 2 ? ` Dos sensores reportaron ${sensors[0].toFixed(3)} s y ${sensors[1].toFixed(3)} s.` : "",
-    reactAvg != null ? ` Reacción media ${reactAvg.toFixed(0)} ms.` : "",
-    telemetry?.velocityKmh != null ? ` Speed media ~${Number(telemetry.velocityKmh).toFixed(1)} km/h.` : "",
-    ` Para IA en la nube guardá la corrida en Supabase y ejecutá la función analyze-run (sin API key en el navegador).`,
+    `Local analysis: oil "${oil}".`,
+    carModel ? ` Model ${carModel}.` : "",
+    manualTrack != null ? ` Manual track ${manualTrack.toFixed(3)} s.` : "",
+    sensors.length >= 2 ? ` Two sensors reported ${sensors[0].toFixed(3)} s and ${sensors[1].toFixed(3)} s.` : "",
+    reactAvg != null ? ` Average reaction ${reactAvg.toFixed(0)} ms.` : "",
+    telemetry?.velocityKmh != null ? ` Estimated average speed ~${Number(telemetry.velocityKmh).toFixed(1)} km/h.` : "",
+    ` For cloud AI, save the run in Supabase and execute the analyze-run function (no API key in the browser).`,
   ]
     .join("")
     .replace(/\s+/g, " ")
@@ -381,7 +381,7 @@ export async function runAiAnalysis(telemetry, options = {}) {
     if (res.ok && res.data?.insight) {
       return mapServerInsightToLabAi(res.data.insight, telemetry);
     }
-    const errMsg = res.error || res.detail || "No se pudo ejecutar analyze-run";
+    const errMsg = res.error || res.detail || "Could not execute analyze-run";
     console.warn("analyze-run:", errMsg);
     return {
       ...analyzeTelemetry(telemetry),

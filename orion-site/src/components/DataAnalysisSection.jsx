@@ -510,7 +510,7 @@ export default function DataAnalysisSection() {
                           <strong>
                             {(massResult.g - massResult.target).toFixed(1)} g
                           </strong>{" "}
-                          {massResult.g <= massResult.target ? "(por debajo o igual)" : "(por encima)"}
+                          {massResult.g <= massResult.target ? "(at or below)" : "(above)"}
                         </p>
                       )}
                     </>

@@ -12,8 +12,8 @@ const photoRotLeft90 = {
   rotateDeg: -90,
   objectPosition: "50% 50%",
   thumbPosition: "50% 50%",
-  scale: 1.12,
-  thumbScale: 1.16,
+  scale: 1.45,
+  thumbScale: 1.5,
 };
 
 /** Departamentos: mismo giro que Fiorella / Estefanía. */

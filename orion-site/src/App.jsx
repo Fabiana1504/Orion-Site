@@ -4,7 +4,7 @@ import ProtectedLabRoute from "./components/auth/ProtectedLabRoute";
 import HomePage from "./pages/HomePage";
 import LabGuestCalcAnalyticsPage from "./pages/LabGuestCalcAnalyticsPage";
 import PublicToolsPage from "./pages/PublicToolsPage";
-import TeamLabPage from "./pages/TeamLabPage";
+import TeamLabEssentialsPage from "./pages/TeamLabEssentialsPage";
 
 export default function App() {
   return (
@@ -31,7 +31,7 @@ export default function App() {
             element={
               // Laboratorio privado principal (telemetría, IA, publicación).
               <ProtectedLabRoute>
-                <TeamLabPage />
+                <TeamLabEssentialsPage />
               </ProtectedLabRoute>
             }
           />

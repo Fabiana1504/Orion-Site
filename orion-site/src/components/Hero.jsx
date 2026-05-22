@@ -41,9 +41,12 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.75, delay: 0.45 }}
         >
-          {/* CTA principal hacia el flujo público de captura de mediciones. */}
+          <p className="hero-subtle">Laboratory access</p>
+          <Link to="/equipo/laboratorio" className="btn btn-primary hero-lab-link">
+            Private access
+          </Link>
           <Link to="/herramientas-equipos" className="btn btn-ghost hero-lab-link">
-            Go to team tools
+            Team access
           </Link>
         </motion.div>
       </div>

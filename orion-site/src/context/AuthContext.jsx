@@ -22,11 +22,11 @@ function humanizeAuthError(err) {
     l.includes("network request failed")
   ) {
     return (
-      "No connection to Supabase (network error). Revisá: " +
-      "(1) En dashboard → Settings → API, copiá de nuevo la Project URL y la anon/public key en .env.local. " +
-      "(2) Que el proyecto no esté pausado. " +
-      "(3) Internet, VPN o firewall. " +
-      "Nota: el laboratorio Orion sigue siendo por invitación (cuenta con correo)."
+      "No connection to Supabase (network error). Check: " +
+      "(1) In dashboard → Settings → API, copy the Project URL and anon/public key again into .env.local. " +
+      "(2) That the project is not paused. " +
+      "(3) Internet, VPN, or firewall. " +
+      "Note: Orion lab access is still invitation-only (email account required)."
     );
   }
   return raw || "Sign-in error.";
@@ -139,7 +139,7 @@ export function AuthProvider({ children }) {
     const normalizedEmail = email.trim().toLowerCase();
     // Validación rápida por allowlist antes de hacer roundtrip de red.
     if (allowedLabEmails.length > 0 && !allowedLabEmails.includes(normalizedEmail)) {
-      return "Este correo no tiene acceso al laboratorio.";
+      return "This email does not have lab access.";
     }
 
     // Ruta alternativa de autenticación local (credenciales definidas en variables de entorno).
@@ -160,7 +160,7 @@ export function AuthProvider({ children }) {
         const signedEmail = String(data?.user?.email ?? normalizedEmail).toLowerCase();
         if (allowedLabEmails.length > 0 && !allowedLabEmails.includes(signedEmail)) {
           await authService.signOutUser();
-          return "Este correo no tiene acceso al laboratorio.";
+          return "This email does not have lab access.";
         }
         return null;
       }
@@ -206,7 +206,7 @@ export function AuthProvider({ children }) {
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) {
-    throw new Error("useAuth debe usarse dentro de AuthProvider");
+    throw new Error("useAuth must be used within AuthProvider");
   }
   return ctx;
 }

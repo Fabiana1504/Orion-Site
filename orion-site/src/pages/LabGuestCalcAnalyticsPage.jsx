@@ -134,7 +134,7 @@ export default function LabGuestCalcAnalyticsPage() {
     const { data, error } = await fetchAllCalcRecordsForLab(800);
     setLoading(false);
     if (error) {
-      setErr(error.message || "No se pudieron cargar los datos.");
+      setErr(error.message || "Could not load data.");
       setRows([]);
       return;
     }

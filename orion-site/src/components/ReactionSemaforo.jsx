@@ -122,9 +122,7 @@ export default function ReactionSemaforo({ onSave, saveBusy }) {
         clearTimers();
         setRunState("false_start");
         setBulbs(bulbsOff());
-        setHint(
-          "Demasiado pronto: esperá a que se apaguen todas las luces a la vez y recién ahí Espacio o el botón.",
-        );
+        setHint("Too soon: wait until all lights turn off at once, then press Space or the button.");
         schedule(() => {
           setHint(null);
           resetIdle();
@@ -156,13 +154,12 @@ export default function ReactionSemaforo({ onSave, saveBusy }) {
   return (
     <section className="team-lab-card clean-panel public-tools-card traffic-semaforo-card">
       <div className="team-lab-card-head">
-        <h2>Traffic light — tiempo de reacción</h2>
+        <h2>Traffic light — reaction time</h2>
         <p className="team-lab-card-desc">
-          Cinco luces <strong>rojas en fila</strong>. Se van encendiendo de izquierda a derecha, con una pausa
-          visible entre cada una; cuando las cinco
-          están encendidas, pasan entre <strong>2 y 10 segundos</strong> (al azar) y en ese momento se{" "}
-          <strong>apagan todas las luces a la vez</strong>. Ahí tocá <kbd className="inline-code">Espacio</kbd> o el
-          botón lo más rápido posible.
+          Five <strong>red lights in a row</strong>. They turn on from left to right with a visible pause
+          between each one; once all five are on, after a random <strong>2 to 10 seconds</strong> they{" "}
+          <strong>all turn off at once</strong>. At that moment, press{" "}
+          <kbd className="inline-code">Space</kbd> or the button as fast as possible.
         </p>
       </div>
 
@@ -171,30 +168,30 @@ export default function ReactionSemaforo({ onSave, saveBusy }) {
           <div
             key={i}
             className={`traffic-bulb traffic-bulb--red${on ? " is-on" : ""}`}
-            aria-label={`Luz ${i + 1} de ${BULBS}${on ? ", encendida" : ", apagada"}`}
+            aria-label={`Light ${i + 1} of ${BULBS}${on ? ", on" : ", off"}`}
           />
         ))}
       </div>
 
       <p className="traffic-semaforo-status team-lab-hint">
-        {runState === "idle" && "Listo para una nueva prueba."}
-        {runState === "prep" && "Prepará el dedo…"}
-        {runState === "arming" && "Se van encendiendo las luces — todavía no pulses."}
-        {runState === "armed" && "Las cinco encendidas — esperá a que se apaguen todas juntas."}
-        {runState === "stimulus" && "¡Todas apagadas! — Espacio o botón ahora."}
-        {runState === "false_start" && (hint ?? "Salida nula.")}
-        {runState === "done" && lastMs != null && `Tu tiempo: ${lastMs} ms`}
+        {runState === "idle" && "Ready for a new run."}
+        {runState === "prep" && "Get ready..."}
+        {runState === "arming" && "Lights are turning on — do not press yet."}
+        {runState === "armed" && "All five are on — wait until they all turn off together."}
+        {runState === "stimulus" && "All lights off! — Space or button now."}
+        {runState === "false_start" && (hint ?? "False start.")}
+        {runState === "done" && lastMs != null && `Your time: ${lastMs} ms`}
       </p>
 
       <div className="traffic-semaforo-actions">
         {runState === "idle" || runState === "done" ? (
           <button type="button" className="btn btn-primary" onClick={startRun} disabled={saveBusy}>
-            {runState === "done" ? "Otra prueba" : "Empezar"}
+            {runState === "done" ? "Run again" : "Start"}
           </button>
         ) : null}
         {runState === "stimulus" ? (
           <button type="button" className="btn btn-primary traffic-hit-btn" onClick={onEarlyOrHit}>
-            ¡Reaccionar! (mismo que Espacio)
+            React now! (same as Space)
           </button>
         ) : null}
       </div>

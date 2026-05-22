@@ -14,10 +14,10 @@ export function humanizeNetworkError(err) {
     l.includes("fetcherror")
   ) {
     return (
-      "No hay conexión con Supabase (el navegador no pudo llegar al servidor). Revisá: " +
-      "(1) En .env.local, VITE_SUPABASE_URL (https://xxxx.supabase.co) y VITE_SUPABASE_ANON_KEY bien copiados; " +
-      "(2) Que el proyecto en Supabase no esté pausado; " +
-      "(3) Internet, VPN o firewall. Reiniciá el servidor de Vite (npm run dev) después de cambiar .env."
+      "No connection to Supabase (the browser could not reach the server). Check: " +
+      "(1) In .env.local, VITE_SUPABASE_URL (https://xxxx.supabase.co) and VITE_SUPABASE_ANON_KEY are correctly copied; " +
+      "(2) The Supabase project is not paused; " +
+      "(3) Internet, VPN, or firewall. Restart the Vite server (npm run dev) after changing .env."
     );
   }
   return null;

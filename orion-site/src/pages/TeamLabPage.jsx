@@ -380,7 +380,7 @@ export default function TeamLabPage() {
     if (currentRunId && isSupabaseConfigured()) {
       const pub = await markRunPublished(currentRunId, true);
       if (!pub.ok && !pub.skipped) {
-        notes.push(`No se pudo marcar is_published: ${pub.error || "error"}`);
+        notes.push(`Could not set is_published: ${pub.error || "error"}`);
       }
     }
     const remote = await saveTelemetryRun({
@@ -406,7 +406,7 @@ export default function TeamLabPage() {
     } else if (!remote.ok) {
       notes.push(`telemetry_runs: ${remote.error || "error"}`);
     }
-    setRemoteSaveMsg(notes.length ? notes.join(" · ") : "Listo.");
+    setRemoteSaveMsg(notes.length ? notes.join(" · ") : "Done.");
   };
 
   const simulateArduino = () => {
@@ -582,23 +582,23 @@ export default function TeamLabPage() {
               </div>
               <div className="team-lab-row">
                 <label className="team-lab-field team-lab-field--grow">
-                  <span>Speed final (km/h, opcional)</span>
+                  <span>Final speed (km/h, optional)</span>
                   <input
                     type="text"
                     inputMode="decimal"
                     value={finalSpeedKmh}
                     onChange={(e) => setFinalSpeedKmh(e.target.value)}
-                    placeholder="para a desde reposo"
+                    placeholder="for acceleration from rest"
                   />
                 </label>
                 <label className="team-lab-field team-lab-field--grow">
-                  <span>Tiempo hasta esa v (s)</span>
+                  <span>Time to reach that v (s)</span>
                   <input
                     type="text"
                     inputMode="decimal"
                     value={reachSpeedTimeSec}
                     onChange={(e) => setReachSpeedTimeSec(e.target.value)}
-                    placeholder="t en a ≈ v/t"
+                    placeholder="t used in a ≈ v/t"
                   />
                 </label>
               </div>
@@ -619,12 +619,12 @@ export default function TeamLabPage() {
                 </p>
               )}
               <div className="team-lab-chip-group">
-                <span className="team-lab-chip-label">Vueltas</span>
+                <span className="team-lab-chip-label">Laps</span>
                 <ul className="team-lab-chips team-lab-chips--laps">
                   {lapTimesSec.length ? (
                     lapTimesSec.map((v, i) => (
                       <li key={`lap-${i}`}>
-                        V{i + 1}: {v.toFixed(3)}s
+                        L{i + 1}: {v.toFixed(3)}s
                       </li>
                     ))
                   ) : (
@@ -633,7 +633,7 @@ export default function TeamLabPage() {
                 </ul>
               </div>
               <div className="team-lab-chip-group">
-                <span className="team-lab-chip-label">Reacciones</span>
+                <span className="team-lab-chip-label">Reactions</span>
                 <ul className="team-lab-chips team-lab-chips--rx">
                   {reactionTimesMs.length ? (
                     reactionTimesMs.map((v, i) => (
@@ -664,7 +664,7 @@ export default function TeamLabPage() {
                   className={`btn btn-primary team-lab-connect-btn ${serialConnected ? "is-connected" : ""}`}
                   onClick={serialConnected ? disconnectSerial : connectArduino}
                 >
-                  {serialConnected ? "Desconectar Arduino" : "Conectar con Arduino"}
+                  {serialConnected ? "Disconnect Arduino" : "Connect Arduino"}
                 </button>
                 {serialSupported ? (
                   <span
@@ -675,7 +675,7 @@ export default function TeamLabPage() {
                     {serialConnected ? "Connected" : "Disconnected"}
                   </span>
                 ) : (
-                  <span className="team-lab-hint team-lab-hint--inline">Web Serial no disponible en este navegador.</span>
+                  <span className="team-lab-hint team-lab-hint--inline">Web Serial is not available in this browser.</span>
                 )}
               </div>
               <div className="team-lab-metrics" aria-label="Latest sensor readings">

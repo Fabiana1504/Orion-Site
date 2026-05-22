@@ -34,7 +34,7 @@ export default function TeamSection() {
           <p className="eyebrow">Team</p>
           <h2>Orion Team</h2>
           <p className="section-lead">
-            Rostro, rol y contexto en un solo vistazo. Elegí a alguien de la lista.
+            Face, role, and context in one view. Select someone from the list.
           </p>
         </div>
 

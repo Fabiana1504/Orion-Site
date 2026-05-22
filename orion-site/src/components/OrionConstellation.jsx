@@ -14,8 +14,8 @@ const STARS = [
     astro: "Betelgeuse",
     x: 22,
     y: 18,
-    label: "Innovación",
-    hint: "Probar, fallar y volver con una mejor idea.",
+    label: "Innovation",
+    hint: "Test, fail, and come back with a better idea.",
     popAnchor: "start",
   },
   {
@@ -24,7 +24,7 @@ const STARS = [
     x: 62,
     y: 24,
     label: "Speed",
-    hint: "Menos tiempo perdido, más decisiones claras.",
+    hint: "Less wasted time, clearer decisions.",
     popAnchor: "end",
   },
   {
@@ -32,8 +32,8 @@ const STARS = [
     astro: "Mintaka",
     x: 39,
     y: 46,
-    label: "Precisión",
-    hint: "Medir dos veces, correr una.",
+    label: "Precision",
+    hint: "Measure twice, race once.",
     popAnchor: "start",
   },
   {
@@ -41,8 +41,8 @@ const STARS = [
     astro: "Alnilam",
     x: 50,
     y: 50,
-    label: "Comunicación",
-    hint: "Que lo que hacemos se entienda afuera.",
+    label: "Communication",
+    hint: "Make our work understandable to others.",
     popAnchor: "start",
   },
   {
@@ -51,7 +51,7 @@ const STARS = [
     x: 61,
     y: 54,
     label: "Team",
-    hint: "Misma dirección, distintos roles.",
+    hint: "Same direction, different roles.",
     popAnchor: "end",
   },
   {
@@ -59,8 +59,8 @@ const STARS = [
     astro: "Saiph",
     x: 36,
     y: 78,
-    label: "Responsabilidad",
-    hint: "Plazos, reglas y palabra del equipo.",
+    label: "Responsibility",
+    hint: "Deadlines, rules, and team commitment.",
     popAnchor: "start",
   },
   {
@@ -69,7 +69,7 @@ const STARS = [
     x: 68,
     y: 72,
     label: "Identidad",
-    hint: "Orion se nota en cada detalle.",
+    hint: "Orion is visible in every detail.",
     popAnchor: "end",
   },
 ];
@@ -186,10 +186,10 @@ export default function OrionConstellation() {
 
   return (
     <div className="orion-constellation clean-panel">
-      <h3 className="mission-chart-title">Orión en el cielo del equipo</h3>
+      <h3 className="mission-chart-title">Orion in the team sky</h3>
       <p className="mission-chart-caption">
-        Pasá el ratón por una estrella para ver la tarjeta al lado. En pantalla táctil, tocá la estrella
-        para abrir o cerrar. <span className="orion-caption-key">Esc</span> cierra el foco.
+        Hover a star to see its card. On touch screens, tap the star to open or close it.{" "}
+        <span className="orion-caption-key">Esc</span> closes focus.
       </p>
       <div className="orion-svg-wrap orion-svg-wrap--map-only">
         <div className="orion-chart-stage" ref={stageRef}>
@@ -202,7 +202,7 @@ export default function OrionConstellation() {
             aria-labelledby={`${uid}-title`}
           >
             <title id={`${uid}-title`}>
-              Constelación de Orión: siete estrellas; elegí una para ver nombre y significado.
+              Orion constellation: seven stars. Choose one to see its name and meaning.
             </title>
             <defs>
               <radialGradient id={gradId} cx="50%" cy="50%" r="50%">
@@ -275,7 +275,7 @@ export default function OrionConstellation() {
                     tabIndex={0}
                     aria-pressed={isSel}
                     aria-expanded={isSel}
-                    aria-label={`${s.astro}: ${s.label}. Pasa el ratón o enfoca para ver la tarjeta.`}
+                    aria-label={`${s.astro}: ${s.label}. Hover or focus to view the card.`}
                     onMouseEnter={() => {
                       cancelScheduledHide();
                       setSelectedId(s.id);

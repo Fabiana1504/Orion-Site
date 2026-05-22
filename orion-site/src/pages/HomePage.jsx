@@ -4,7 +4,6 @@ import Hero from "../components/Hero";
 import About from "../components/About";
 import ValuesSection from "../components/ValuesSection";
 import CarShowcaseLazy from "../components/CarShowcaseLazy";
-import DataAnalysisSection from "../components/DataAnalysisSection";
 import ProcessSection from "../components/ProcessSection";
 import Departments from "../components/Departments";
 import TeamSection from "../components/TeamSection";
@@ -36,7 +35,6 @@ export default function HomePage() {
           <MissionStorySection />
         </Suspense>
         <CarShowcaseLazy />
-        <DataAnalysisSection />
         <ProcessSection />
         <Departments />
         <TeamSection />
