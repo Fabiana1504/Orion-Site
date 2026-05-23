@@ -51,13 +51,6 @@ export default function LabLogin({ onSuccess, onClose, dialogTitleId }) {
         </h1>
       )}
 
-      <p className={`login-modal-lead ${onClose ? "" : "lab-login-lead"}`}>
-        {hasLocalCredentials
-          ? "Use the laboratory credentials configured for this project."
-          : "Use the account created by the administrator in Supabase for the laboratory."}{" "}
-        The <strong>Team tools</strong> page is a local draft (not linked to this login flow).
-      </p>
-
       <form className="login-modal-form lab-login-form" onSubmit={handleSubmit} aria-labelledby={titleId}>
         <label className="login-modal-field">
           <span>Email</span>
