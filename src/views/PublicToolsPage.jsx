@@ -212,11 +212,6 @@ export default function PublicToolsPage() {
           <header className="team-lab-hero public-tools-hero">
             <p className="eyebrow eyebrow--pulse">Draft · Team tools</p>
             <h1 className="team-lab-page-title">Calculators for teams</h1>
-            <p className="team-lab-lead">
-              Draft flow: <strong>pick category (and team)</strong>, then move to the panel where teams enter{" "}
-              <strong>speed, reaction, and acceleration</strong>. This can later be connected to Orion with
-              database-backed workflows.
-            </p>
           </header>
 
           {phase === "pick" ? (
